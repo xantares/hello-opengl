@@ -18,8 +18,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <GL/glut.h>
-#include <GL/freeglut_ext.h>
+#include <GL/gl.h>
+#include <SDL2/SDL.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265
@@ -175,7 +175,7 @@ cleanup(void)
    glDeleteLists(gear1, 1);
    glDeleteLists(gear2, 1);
    glDeleteLists(gear3, 1);
-   glutDestroyWindow(win);
+//    glutDestroyWindow(win);
 }
 
 static void
@@ -211,51 +211,51 @@ draw(void)
 
   glPopMatrix();
 
-  glutSwapBuffers();
-
+//   glutSwapBuffers();
+// SDL_GL_SwapBuffers();
   Frames++;
 
-  {
-    GLint t = glutGet(GLUT_ELAPSED_TIME);
-    if (t - T0 >= 5000) {
-      GLfloat seconds = (t - T0) / 1000.0;
-      GLfloat fps = Frames / seconds;
-      printf("%d frames in %6.3f seconds = %6.3f FPS\n", Frames, seconds, fps);
-      fflush(stdout);
-      T0 = t;
-      Frames = 0;
-      if ((t >= 999.0 * autoexit) && (autoexit)) {
-        cleanup();
-        exit(0);
-      }
-    }
-  }
+//   {
+//     GLint t = glutGet(GLUT_ELAPSED_TIME);
+//     if (t - T0 >= 5000) {
+//       GLfloat seconds = (t - T0) / 1000.0;
+//       GLfloat fps = Frames / seconds;
+//       printf("%d frames in %6.3f seconds = %6.3f FPS\n", Frames, seconds, fps);
+//       fflush(stdout);
+//       T0 = t;
+//       Frames = 0;
+//       if ((t >= 999.0 * autoexit) && (autoexit)) {
+//         cleanup();
+//         exit(0);
+//       }
+//     }
+//   }
 }
 
 
 static void
 idle(void)
 {
-  static double t0 = -1.;
-  double dt, t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-  if (t0 < 0.0)
-    t0 = t;
-  dt = t - t0;
-  t0 = t;
+//   static double t0 = -1.;
+//   double dt, t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+//   if (t0 < 0.0)
+//     t0 = t;
+//   dt = t - t0;
+//   t0 = t;
 
-  angle += 70.0 * dt;  /* 70 degrees per second */
-  angle = fmod(angle, 360.0); /* prevents eventual overflow */
+//   angle += 70.0 * dt;  /* 70 degrees per second */
+//   angle = fmod(angle, 360.0); /* prevents eventual overflow */
 
-  glutPostRedisplay();
+//   glutPostRedisplay();
 }
 
 static void
 update_idle_func(void)
 {
-  if (Visible && Animate)
-    glutIdleFunc(idle);
-  else
-    glutIdleFunc(NULL);
+//   if (Visible && Animate)
+//     glutIdleFunc(idle);
+//   else
+//     glutIdleFunc(NULL);
 }
 
 /* change view angle, exit upon ESC */
@@ -287,7 +287,7 @@ key(unsigned char k, int x, int y)
   default:
     return;
   }
-  glutPostRedisplay();
+//   glutPostRedisplay();
 }
 
 /* change view angle */
@@ -295,23 +295,23 @@ key(unsigned char k, int x, int y)
 static void
 special(int k, int x, int y)
 {
-  switch (k) {
-  case GLUT_KEY_UP:
-    view_rotx += 5.0;
-    break;
-  case GLUT_KEY_DOWN:
-    view_rotx -= 5.0;
-    break;
-  case GLUT_KEY_LEFT:
-    view_roty += 5.0;
-    break;
-  case GLUT_KEY_RIGHT:
-    view_roty -= 5.0;
-    break;
-  default:
-    return;
-  }
-  glutPostRedisplay();
+//   switch (k) {
+//   case GLUT_KEY_UP:
+//     view_rotx += 5.0;
+//     break;
+//   case GLUT_KEY_DOWN:
+//     view_rotx -= 5.0;
+//     break;
+//   case GLUT_KEY_LEFT:
+//     view_roty += 5.0;
+//     break;
+//   case GLUT_KEY_RIGHT:
+//     view_roty -= 5.0;
+//     break;
+//   default:
+//     return;
+//   }
+//   glutPostRedisplay();
 }
 
 /* new window size or exposure */
@@ -388,22 +388,125 @@ visible(int vis)
    update_idle_func();
 }
 
+// int main(int argc, char *argv[])
+// {
+//   glutInitWindowSize(300, 300);
+//   glutInit(&argc, argv);
+// //   glutInitContextVersion(3, 2);
+//   glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
+//   win = glutCreateWindow("Gears");
+//   init(argc, argv);
+// 
+//   glutDisplayFunc(draw);
+//   glutReshapeFunc(reshape);
+//   glutKeyboardFunc(key);
+//   glutSpecialFunc(special);
+//   glutVisibilityFunc(visible);
+//   update_idle_func();
+// 
+//   glutMainLoop();
+//   return 0;             /* ANSI C requires main to return int. */
+// }
+
 int main(int argc, char *argv[])
 {
-  glutInitWindowSize(300, 300);
-  glutInit(&argc, argv);
-//   glutInitContextVersion(3, 2);
-  glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-  win = glutCreateWindow("Gears");
-  init(argc, argv);
+  SDL_Window* window = 0;
+    SDL_GLContext contexteOpenGL = 0;
+	
+    SDL_Event evenements;
+    int terminer = 0;
+	
+	
+    // Initialisation de la SDL
+	
+    if(SDL_Init(SDL_INIT_VIDEO) < 0)
+    {
+//         std::cout << "Erreur lors de l'initialisation de la SDL : " << SDL_GetError() << std::endl;
+        printf("err sdl init\n");
+        SDL_Quit();
+		
+        return -1;
+    }
+	
+	
+    // Version d'OpenGL
+	
+//     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+//     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+// 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	
+    // Double Buffer
+	
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+	
+	
+    // Création de la fenêtre
 
-  glutDisplayFunc(draw);
-  glutReshapeFunc(reshape);
-  glutKeyboardFunc(key);
-  glutSpecialFunc(special);
-  glutVisibilityFunc(visible);
-  update_idle_func();
+    window = SDL_CreateWindow("Test SDL 2.0", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN| SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
 
-  glutMainLoop();
-  return 0;             /* ANSI C requires main to return int. */
+    if(window == 0)
+    {
+//         std::cout << "Erreur lors de la creation de la window : " << SDL_GetError() << std::endl;
+         printf("err win init\n");
+        SDL_Quit();
+
+        return -1;
+    }
+
+
+    // Création du contexte OpenGL
+
+    contexteOpenGL = SDL_GL_CreateContext(window);
+
+    if(contexteOpenGL == 0)
+    {
+//         std::cout << SDL_GetError() << std::endl;
+         printf("err sdl init%s\n", SDL_GetError());
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+
+        return -1;
+    }
+	glClearColor(0,0,0,1);
+glClear(GL_COLOR_BUFFER_BIT);
+SDL_GL_SwapWindow(window);
+
+	printf("GL_RENDERER   = %s\n", (char *) glGetString(GL_RENDERER));
+      printf("GL_VERSION    = %s\n", (char *) glGetString(GL_VERSION));
+      printf("GL_VENDOR     = %s\n", (char *) glGetString(GL_VENDOR));
+      printf("GL_EXTENSIONS = %s\n", (char *) glGetString(GL_EXTENSIONS));
+    // Boucle principale
+	init(argc, argv);
+  reshape(800, 600);
+    while(!terminer)
+    {
+      draw();
+      SDL_GL_SwapWindow(window);
+      
+        SDL_WaitEvent(&evenements);
+		
+        if(evenements.window.event == SDL_WINDOWEVENT_CLOSE)
+        terminer = 1;
+        
+        
+        static double t0 = -1.;
+  double dt, t =  SDL_GetTicks() / 1000.0;
+  if (t0 < 0.0)
+    t0 = t;
+  dt = t - t0;
+  t0 = t;
+
+  angle += 70.0 * dt;  /* 70 degrees per second */
+  angle = fmod(angle, 360.0); /* prevents eventual overflow */
+    }
+	
+	
+    // On quitte la SDL
+	
+    SDL_GL_DeleteContext(contexteOpenGL);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+	
+    return 0;
 }

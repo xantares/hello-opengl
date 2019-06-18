@@ -2,17 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dlfcn.h>
-// <GL/gl.h>
+
 #define GL_VENDOR                              0x1F00
+
 int main(int argc, char** argv)
 {
     void *handle;
     char* (*func_glGetString)(int);
 
-//     if (argc != 2) {
-//         fprintf(stderr, "Usage: %s animal_type\n", argv[0]);
-//         return EXIT_FAILURE;
-//     }
 #ifdef _WIN32
     handle = dlopen("opengl32.dll", RTLD_LAZY);
 #else
