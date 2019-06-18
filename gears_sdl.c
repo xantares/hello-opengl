@@ -431,8 +431,8 @@ int main(int argc, char *argv[])
 	
     // Version d'OpenGL
 	
-//     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-//     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 // 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	
     // Double Buffer
@@ -468,6 +468,8 @@ int main(int argc, char *argv[])
 
         return -1;
     }
+    
+    printf("ERRRR=%s\n", SDL_GetError());
 	glClearColor(0,0,0,1);
 glClear(GL_COLOR_BUFFER_BIT);
 SDL_GL_SwapWindow(window);
