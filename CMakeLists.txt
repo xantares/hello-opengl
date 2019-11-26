@@ -21,33 +21,36 @@ project (hello)
 find_package(OpenGL REQUIRED)
 find_package(GLUT)
 find_package(SDL2)
-find_package(glfw3)
+#find_package(glfw3)
 
-add_executable (gears gears.c)
-target_link_libraries(gears ${OPENGL_opengl_LIBRARY} ${OPENGL_gl_LIBRARY} ${GLUT_glut_LIBRARY})
+if (GLUT_FOUND)
+  add_executable (gears gears.c)
+  target_link_libraries(gears ${OPENGL_opengl_LIBRARY} ${OPENGL_gl_LIBRARY} ${GLUT_glut_LIBRARY})
 
-if (UNIX)
-  target_link_libraries(gears m)
+  if (UNIX)
+    target_link_libraries(gears m)
+  endif ()
+
+  install (TARGETS gears DESTINATION bin)
 endif ()
-
-install (TARGETS gears DESTINATION bin)
 # 
 # find_library(LIBDL_LIBRARY NAMES dl)
 # add_executable (dlopen_opengl dlopen_opengl.c)
 # target_link_libraries(dlopen_opengl ${LIBDL_LIBRARY})
 
+if (SDL2_FOUND)
+  add_executable (gears_sdl gears_sdl.c)
+  if (MINGW)
+    target_link_libraries(gears_sdl mingw32)
+  endif ()
+  target_link_libraries(gears_sdl SDL2main SDL2 ${OPENGL_opengl_LIBRARY} ${OPENGL_gl_LIBRARY})
 
-add_executable (gears_sdl gears_sdl.c)
-if (MINGW)
-  target_link_libraries(gears_sdl mingw32)
+  if (UNIX)
+    target_link_libraries(gears_sdl m)
+  endif ()
+
+  install (TARGETS gears_sdl DESTINATION bin)
 endif ()
-target_link_libraries(gears_sdl SDL2::SDL2main SDL2::SDL2 ${OPENGL_opengl_LIBRARY} ${OPENGL_gl_LIBRARY})
-
-if (UNIX)
-  target_link_libraries(gears_sdl m)
-endif ()
-
-install (TARGETS gears_sdl DESTINATION bin)
 
 # if (glfw3_FOUND)
 # 
