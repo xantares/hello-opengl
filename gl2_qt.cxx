@@ -5,6 +5,9 @@
 #include <iostream>
 #include <QOpenGLFunctions_3_2_Core>
 #include <QOpenGLFunctions>
+#if QT_VERSION >= 0x060000
+#include <QOpenGLVersionFunctionsFactory>
+#endif
 
 class Window:public QOpenGLWindow
 {
@@ -37,7 +40,11 @@ static bool HaveOpenGL32()
 
 //   std::cout << functions->glGetError() <<std::endl;
 
+#if QT_VERSION >= 0x060000
+  return QOpenGLVersionFunctionsFactory::get<QOpenGLFunctions_3_2_Core>(&context);
+#else
   return context.versionFunctions<QOpenGLFunctions_3_2_Core>();
+#endif
 }
 
 int main(int argc, char **argv)

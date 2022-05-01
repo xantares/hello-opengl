@@ -470,7 +470,7 @@ int main(int argc, char *argv[])
     }
     
     printf("ERRRR=%s\n", SDL_GetError());
-	glClearColor(0,0,0,1);
+	glClearColor(0,1,0,0.5);
 glClear(GL_COLOR_BUFFER_BIT);
 SDL_GL_SwapWindow(window);
 

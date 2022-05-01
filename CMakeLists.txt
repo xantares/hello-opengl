@@ -1,6 +1,4 @@
-
-
-cmake_minimum_required (VERSION 2.8.12)
+cmake_minimum_required (VERSION 3.2)
 
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the build type")
 
@@ -25,7 +23,7 @@ find_package(SDL2)
 
 if (GLUT_FOUND)
   add_executable (gears gears.c)
-  target_link_libraries(gears ${OPENGL_opengl_LIBRARY} ${OPENGL_gl_LIBRARY} ${GLUT_glut_LIBRARY})
+  target_link_libraries(gears ${OPENGL_opengl_LIBRARY} ${OPENGL_gl_LIBRARY} ${GLUT_LIBRARIES})
 
   if (UNIX)
     target_link_libraries(gears m)
@@ -58,11 +56,9 @@ endif ()
 #   target_link_libraries(square_glfw glfw ${OPENGL_opengl_LIBRARY} ${OPENGL_gl_LIBRARY})
 # endif ()
 
-
-find_package(Qt5Gui NO_MODULE)
-find_package (Qt5Widgets NO_MODULE)
-if (Qt5Gui_FOUND)
+set(HELLO_QT_VERSION 5 CACHE STRING "Qt version")
+find_package(Qt${HELLO_QT_VERSION} COMPONENTS Gui Widgets OpenGL)
+if (Qt${HELLO_QT_VERSION}_FOUND)
   add_executable (gl2_qt gl2_qt.cxx)
-  target_link_libraries(gl2_qt ${OPENGL_opengl_LIBRARY} ${OPENGL_gl_LIBRARY} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES})
-  target_include_directories (gl2_qt PRIVATE ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Test_INCLUDE_DIRS})
+  target_link_libraries(gl2_qt ${Qt${HELLO_QT_VERSION}Widgets_LIBRARIES} ${Qt${HELLO_QT_VERSION}OpenGL_LIBRARIES} ${Qt${HELLO_QT_VERSION}Gui_LIBRARIES})
 endif ()
